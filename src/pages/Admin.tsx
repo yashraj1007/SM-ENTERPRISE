@@ -440,6 +440,7 @@ export default function Admin() {
                               src={newProduct.imageUrl} 
                               alt="Preview" 
                               className="w-full h-full object-cover"
+                              referrerPolicy="no-referrer"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/broken/200';
                               }}
@@ -488,7 +489,7 @@ export default function Admin() {
                       <td className="py-6 px-4">
                         <div className="flex items-center">
                           {p.imageUrl ? (
-                            <img src={p.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover mr-4" />
+                            <img src={p.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover mr-4" referrerPolicy="no-referrer" />
                           ) : (
                             <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mr-4">
                               <ImageIcon className="h-6 w-6 text-gray-300" />

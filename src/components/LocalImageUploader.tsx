@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
 import { motion, AnimatePresence } from 'motion/react';
 import { Upload, CheckCircle2, Loader2, Link as LinkIcon, Zap, Image as ImageIcon } from 'lucide-react';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase';
 
 interface LocalImageUploaderProps {
   onUploadSuccess?: (url: string) => void;
@@ -27,45 +29,39 @@ export default function LocalImageUploader({ onUploadSuccess }: LocalImageUpload
     try {
       // Step 1: Client-side compression
       const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
+        maxSizeMB: 0.8,
+        maxWidthOrHeight: 1200,
         useWebWorker: true
       };
       const compressedFile = await imageCompression(file, options);
-      setProgress(30);
+      setProgress(20);
 
-      // Step 2: Upload to local server
-      const formData = new FormData();
-      formData.append('image', compressedFile);
+      // Step 2: Upload to Firebase Storage
+      const fileName = `uploads/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error(`Server returned unexpected format: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Server upload failed');
-      }
-
-      const relativeUrl = data.imageUrl;
-      const absoluteUrl = window.location.origin + data.imageUrl;
-      
-      setProgress(100);
-      setFinalUrl(absoluteUrl);
-      setStatus('success');
-      
-      if (onUploadSuccess) {
-        onUploadSuccess(relativeUrl);
-      }
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 70 + 20; // 20% to 90%
+          setProgress(Math.round(p));
+        }, 
+        (err) => {
+          console.error('Firebase Storage Error:', err);
+          setError(`Transmission failed: ${err.message}`);
+          setStatus('error');
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setProgress(100);
+          setFinalUrl(downloadURL);
+          setStatus('success');
+          
+          if (onUploadSuccess) {
+            onUploadSuccess(downloadURL);
+          }
+        }
+      );
     } catch (err: any) {
       console.error('Upload error:', err);
       setError(err.message || 'Transmission error');
