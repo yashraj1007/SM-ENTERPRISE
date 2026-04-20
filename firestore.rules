@@ -1,0 +1,138 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+             (request.auth.token.email in ["yashrajbhore1107@gmail.com", "bauchkarpranoti@gmail.com", "testywebdevp@gmail.com"] || 
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) &&
+             data.uid is string &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['admin', 'user'] &&
+             isValidDateString(data.createdAt);
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'price', 'category', 'stock', 'createdAt', 'imageUrl']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.price is number && data.price >= 0 &&
+             data.category is string &&
+             data.stock is number && data.stock >= 0 &&
+             data.imageUrl is string &&
+             (!('description' in data) || data.description is string) &&
+             isValidDateString(data.createdAt);
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'total', 'status', 'createdAt']) &&
+             data.userId is string &&
+             data.total is number && data.total >= 0 &&
+             data.status in ['pending', 'processing', 'shipped', 'delivered', 'cancelled'] &&
+             (!('items' in data) || data.items is list) &&
+             isValidDateString(data.createdAt);
+    }
+
+    function isValidQuery(data) {
+      return data.keys().hasAll(['name', 'email', 'type', 'problem', 'status', 'createdAt', 'userId']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.type in ['software', 'hardware'] &&
+             data.problem is string && data.problem.size() > 0 &&
+             data.status in ['pending', 'in-progress', 'resolved'] &&
+             isValidDateString(data.createdAt) &&
+             (!('adminResponse' in data) || data.adminResponse is string) &&
+             (!('respondedAt' in data) || isValidDateString(data.respondedAt));
+    }
+
+    function isValidContactQuery(data) {
+      return data.keys().hasAll(['name', 'email', 'subject', 'message', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.subject is string && data.subject.size() > 0 &&
+             data.message is string && data.message.size() > 0 &&
+             isValidDateString(data.createdAt);
+    }
+
+    function isValidUpload(data) {
+      return data.keys().hasAll(['imageUrl', 'fileName', 'uploadedAt', 'uploadedBy']) &&
+             data.imageUrl is string && 
+             data.fileName is string && data.fileName.size() > 0 &&
+             isValidDateString(data.uploadedAt) &&
+             data.uploadedBy is string;
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data) && 
+                      (request.resource.data.role == 'user' || isAdmin());
+      allow update: if (isOwner(userId) || isAdmin()) && isValidUserProfile(request.resource.data) && 
+                      (isAdmin() || request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidProduct(request.resource.data);
+    }
+
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidOrder(request.resource.data) && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin() && isValidOrder(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /queries/{queryId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidQuery(request.resource.data) && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin() && isValidQuery(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /contact_queries/{contactId} {
+      allow read: if isAdmin();
+      allow create: if true && isValidContactQuery(request.resource.data);
+      allow update: if isAdmin() && isValidContactQuery(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /uploads/{uploadId} {
+      allow read: if true; // User wants to display them in a grid
+      allow create: if isAuthenticated() && isValidUpload(request.resource.data);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

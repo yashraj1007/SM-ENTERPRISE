@@ -1,0 +1,112 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user profile information and roles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique ID of the user" },
+        "email": { "type": "string", "format": "email", "description": "The user's email address" },
+        "role": { "type": "string", "enum": ["admin", "user"], "description": "The user's role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the profile was created" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Stores product information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Product name" },
+        "description": { "type": "string", "description": "Product description" },
+        "price": { "type": "number", "description": "Product price" },
+        "category": { "type": "string", "description": "Product category" },
+        "stock": { "type": "number", "description": "Available stock" },
+        "imageUrl": { "type": "string", "format": "uri", "description": "Product image URL" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the product was added" }
+      },
+      "required": ["name", "price", "category", "stock", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Stores customer orders",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the user who placed the order" },
+        "total": { "type": "number", "description": "Total order amount" },
+        "status": { "type": "string", "enum": ["pending", "processing", "shipped", "delivered"], "description": "Order status" },
+        "items": { "type": "array", "items": { "type": "object" }, "description": "Ordered items" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the order was placed" }
+      },
+      "required": ["userId", "total", "status", "createdAt"]
+    },
+    "Query": {
+      "title": "Service Query",
+      "description": "Stores customer service queries",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Customer name" },
+        "email": { "type": "string", "format": "email", "description": "Customer email" },
+        "phone": { "type": "string", "description": "Customer phone" },
+        "type": { "type": "string", "enum": ["software", "hardware"], "description": "Query type" },
+        "deviceType": { "type": "string", "description": "Type of device" },
+        "problem": { "type": "string", "description": "Description of the problem" },
+        "status": { "type": "string", "enum": ["pending", "in-progress", "resolved"], "description": "Query status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the query was submitted" }
+      },
+      "required": ["name", "email", "type", "problem", "status", "createdAt"]
+    },
+    "ContactQuery": {
+      "title": "Contact Query",
+      "description": "Stores general contact form submissions",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Sender name" },
+        "email": { "type": "string", "format": "email", "description": "Sender email" },
+        "subject": { "type": "string", "description": "Message subject" },
+        "message": { "type": "string", "description": "Message content" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the message was sent" }
+      },
+      "required": ["name", "email", "subject", "message", "createdAt"]
+    },
+    "Upload": {
+      "title": "Uploaded Image",
+      "description": "Stores metadata for uploaded images",
+      "type": "object",
+      "properties": {
+        "imageUrl": { "type": "string", "format": "uri", "description": "URL of the uploaded image" },
+        "fileName": { "type": "string", "description": "Original file name" },
+        "uploadedAt": { "type": "string", "format": "date-time", "description": "When the image was uploaded" },
+        "uploadedBy": { "type": "string", "description": "Email or ID of the uploader" },
+        "userId": { "type": "string", "description": "ID of the uploader for access control" }
+      },
+      "required": ["imageUrl", "fileName", "uploadedAt", "uploadedBy"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Product catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders"
+    },
+    "/queries/{queryId}": {
+      "schema": "Query",
+      "description": "Service queries"
+    },
+    "/contact_queries/{contactId}": {
+      "schema": "ContactQuery",
+      "description": "General contact submissions"
+    },
+    "/uploads/{uploadId}": {
+      "schema": "Upload",
+      "description": "User uploaded images gallery"
+    }
+  }
+}

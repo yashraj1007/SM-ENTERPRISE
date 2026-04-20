@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SM ENTERPRISE & LAPTOP HOUSE | Portable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .hero-gradient { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    </style>
+</head>
+<body>
+    <nav class="bg-white border-b border-gray-100 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="monitor" class="text-blue-600"></i>
+                <span class="font-black tracking-tighter text-gray-900 uppercase">SM ENTERPRISE</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                <a href="#" class="hover:text-blue-600">Shop</a>
+                <a href="#" class="hover:text-blue-600">Repair</a>
+                <a href="contact.html" class="hover:text-blue-600">Contact</a>
+                <a href="admin.html" class="text-gray-300 hover:text-gray-900">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-gradient text-white py-32 px-6 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <h1 class="text-7xl md:text-9xl font-black italic tracking-tighter leading-none mb-6">PREMIUM<br>LAPTOPS.</h1>
+            <p class="max-w-xl text-gray-400 font-bold text-lg mb-12">Expert hardware solutions and enterprise-grade laptop sales. Registered technicians available 24/7.</p>
+            <div class="flex gap-4">
+                <button class="bg-blue-600 px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-950">Explore Shop</button>
+                <button class="bg-white/10 backdrop-blur px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs border border-white/20 hover:bg-white/20 transition-all">Service Request</button>
+            </div>
+        </div>
+        <div class="absolute right-0 top-0 w-1/2 h-full opacity-20 pointer-events-none">
+            <i data-lucide="cpu" class="w-full h-full stroke-[0.1]"></i>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto py-24 px-6">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <p class="text-blue-600 font-black uppercase tracking-[0.3em] text-[10px] mb-2">Inventory Sync</p>
+                <h2 class="text-4xl font-black text-gray-900 tracking-tight">FEATURED MACHINES</h2>
+            </div>
+            <a href="#" class="font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-900 underline">View Catalog</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm group">
+                <div class="aspect-video rounded-2xl bg-gray-100 mb-6 overflow-hidden">
+                    <img src="https://picsum.photos/seed/laptop1/800/600" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                </div>
+                <h3 class="font-black text-gray-900 uppercase tracking-tight">XPS Pro Edition</h3>
+                <p class="text-gray-500 text-xs font-bold mb-6">16GB RAM / 1TB SSD / i7-12th Gen</p>
+                <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+                    <span class="font-black text-blue-600">$1,299</span>
+                    <button class="p-2 hover:bg-gray-100 rounded-xl transition-colors"><i data-lucide="shopping-cart"></i></button>
+                </div>
+            </div>
+            <!-- More items can be duplicated here -->
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-gray-100 py-12 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">SM ENTERPRISE & LAPTOP HOUSE &copy; 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

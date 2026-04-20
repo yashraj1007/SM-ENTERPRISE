@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE ACCESS | SM ENTERPRISE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-950 flex items-center justify-center min-h-screen px-4">
+    <div class="max-w-md w-full">
+        <div class="text-center mb-12">
+            <div class="bg-gray-900 w-20 h-20 rounded-3xl mx-auto flex items-center justify-center mb-6 border border-gray-800 shadow-2xl">
+                <i data-lucide="shield-check" class="text-blue-500 w-8 h-8"></i>
+            </div>
+            <h1 class="text-3xl font-black text-white italic tracking-tighter">RESTRICTED AREA</h1>
+            <p class="text-gray-600 font-bold text-[10px] uppercase tracking-[0.3em] mt-2">Management Authentication</p>
+        </div>
+
+        <form id="loginForm" class="bg-gray-900/50 p-10 rounded-[2.5rem] border border-gray-800 space-y-8 shadow-2xl backdrop-blur-xl">
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Corporate ID</label>
+                    <input type="text" id="username" class="w-full bg-gray-950 border-2 border-gray-800 rounded-2xl py-4 px-6 text-white font-bold focus:border-blue-600 outline-none transition-all" placeholder="Username" required>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Access Token</label>
+                    <input type="password" id="password" class="w-full bg-gray-950 border-2 border-gray-800 rounded-2xl py-4 px-6 text-white font-bold focus:border-blue-600 outline-none transition-all" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div id="errorMessage" class="hidden bg-red-950/30 border border-red-900/50 text-red-500 text-[10px] font-black p-4 rounded-xl text-center uppercase tracking-widest">
+                Access Denied: Invalid Credentials
+            </div>
+
+            <button type="submit" class="w-full bg-white text-black py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-xl">
+                Authorize Session
+            </button>
+        </form>
+
+        <p class="text-center mt-12">
+            <a href="index.html" class="text-[10px] font-black text-gray-700 uppercase tracking-widest hover:text-blue-500">← Back to Terminal</a>
+        </p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const form = document.getElementById('loginForm');
+        const err = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if (u === 'SMENTERPRISE' && p === 'admin1234') {
+                alert('ACCESS GRANTED. Redirecting to Dashboard...');
+                // In a real hosting environment, you would redirect to a hidden dashboard.php or dashboard.html
+                // window.location.href = 'dashboard.html';
+            } else {
+                err.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
